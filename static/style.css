@@ -1,0 +1,50 @@
+body {
+    font-family: sans-serif;
+}
+
+.login-page {
+    width: 360px;
+    padding: 8% 0 0;
+    margin: auto;
+}
+
+.form {
+    position: relative;
+    z-index: 1;
+    background: #ffffff;
+    max-width: 360px;
+    margin: 0 auto 100px;
+    padding: 42px;
+    text-align: center;
+    box-shadow: 0 0.1875rem 0.4375rem 0.1875rem rgba(3, 3, 3, 0.13), 0 0.6875rem 1.5rem 1rem rgba(3, 3, 3, 0.12);
+    border-top: 4px solid #184e8b;
+}
+
+button, .form input {
+    font-family: sans-serif;
+    outline: 0;
+    background: #f2f2f2;
+    width: 100%;
+    border: 0;
+    margin: 0 0 16px;
+    padding: 16px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+button, .form input.submit {
+    text-transform: uppercase;
+    background: #184e8b;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+button:hover, .form input.submit:hover {
+    background: #6cabdf;
+}
+
+.form .message {
+    color: #ff2020;
+    font-size: 14px;
+    margin: 0 0 16px;
+}

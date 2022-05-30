@@ -1,0 +1,18 @@
+{%extends "base.html"%}
+
+{%block body%}
+<div class="login-page">
+    <div class="form">
+        <form action="{{ action }}" method="post">
+            <input type="hidden" name="key" value="{{ key }}" />
+            <input type="hidden" name="authn_reference" value="{{ authn_reference }}" />
+            <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}" />
+
+            <input type="text" placeholder="username" name="login" value="{{ login }}" autofocus />
+            <input type="password" placeholder="password" name="password" value="{{ password }}" />
+
+            <input class="submit" type="submit" name="form.submitted" value="login" />
+        </form>
+    </div>
+</div>
+{%endblock%}

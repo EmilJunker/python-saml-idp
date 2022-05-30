@@ -1,0 +1,10 @@
+{%extends "base.html"%}
+
+{%block body%}
+<div class="login-page">
+    <div class="form">
+        <div class="message">{{ error_message }}</div>
+        <button onclick="window.history.go(-1)">Go back</button>
+    </div>
+</div>
+{%endblock%}
