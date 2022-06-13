@@ -35,13 +35,15 @@ cd python-saml-idp
 
 3. Configure the Identity Provider using the file `idp_conf.py`. In particular, make sure the `LDAP_SETTINGS` match the configuration of the LDAP you want to connect to. If you plan to deploy the IdP behind a proxy, set the `BASE` to the public URL where the IdP will be reachable.
 
-4. Next, generate an IdP metadata file based on the configuration:
+4. Map the attributes from your LDAP to the corresponding SAML attributes using the file `attributemaps/map.py`.
+
+5. Next, generate an IdP metadata file based on the configuration:
 
 ```sh
 make_metadata.py idp_conf.py > idp.xml
 ```
 
-5. Finally, start the application:
+6. Finally, start the application:
 
 ```sh
 ./idp.py

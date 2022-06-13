@@ -24,6 +24,7 @@ CONFIG = {
     "metadata": {
         "local": ["sp.xml"],
     },
+    "attribute_map_dir" : "./attributemaps",
     "organization": {
         "display_name": "Python SAML IdP",
         "name": "Python SAML IdP",
