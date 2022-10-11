@@ -3,7 +3,7 @@
 import argparse
 import base64
 from hashlib import sha1
-import importlib
+import importlib.util
 import logging
 import os
 import six
@@ -18,6 +18,7 @@ from saml2.authn_context import AuthnBroker
 from saml2.authn_context import PASSWORD
 from saml2.authn_context import UNSPECIFIED
 from saml2.authn_context import authn_context_class_ref
+from saml2.config import config_factory
 from saml2.metadata import create_metadata_string
 from saml2.s_utils import UnknownPrincipal
 from saml2.s_utils import UnsupportedBinding
@@ -25,8 +26,6 @@ from saml2.s_utils import exception_trace
 from saml2.s_utils import rndstr
 from saml2.sigver import encrypt_cert_from_item
 from saml2.sigver import verify_redirect_signature
-
-from idp_conf import LDAP_SETTINGS
 
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
@@ -183,10 +182,10 @@ class SSO(Service):
 
         if not _resp:
             try:
-                dn = LDAP_SETTINGS["base"].format(self.user)
-                conn = ldap.initialize(LDAP_SETTINGS["ldapuri"])
+                dn = CONFIG.LDAP_SETTINGS["base"].format(self.user)
+                conn = ldap.initialize(CONFIG.LDAP_SETTINGS["ldapuri"])
                 try:
-                    attrs = LDAP_SETTINGS["user_attrs"]
+                    attrs = CONFIG.LDAP_SETTINGS["user_attrs"]
                 except KeyError:
                     attrs = None
                 result = conn.search_s(dn, ldap.SCOPE_SUBTREE, attrlist=attrs)
@@ -322,8 +321,8 @@ def verify_username_and_password(dic):
     username = dic["login"]
     password = dic["password"]
     try:
-        dn = LDAP_SETTINGS["base"].format(username)
-        conn = ldap.initialize(LDAP_SETTINGS["ldapuri"])
+        dn = CONFIG.LDAP_SETTINGS["base"].format(username)
+        conn = ldap.initialize(CONFIG.LDAP_SETTINGS["ldapuri"])
         conn.simple_bind_s(dn, password)
         return True, username
     except Exception:
@@ -503,16 +502,21 @@ def verify():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", dest="config", default="idp_conf")
+    parser.add_argument("-c", dest="config_file", default="./idp_conf.py")
     args = parser.parse_args()
 
-    CONFIG = importlib.import_module(args.config)
+    spec = importlib.util.spec_from_file_location("idp_conf", args.config_file)
+    config = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config)
+
+    CONFIG = config
 
     AUTHN_BROKER = AuthnBroker()
     AUTHN_BROKER.add(authn_context_class_ref(PASSWORD), username_password_authn, 10, CONFIG.BASE)
     AUTHN_BROKER.add(authn_context_class_ref(UNSPECIFIED), "", 0, CONFIG.BASE)
 
-    IDP = server.Server(args.config, cache=Cache())
+    server_config = config_factory("idp", CONFIG.CONFIG)
+    IDP = server.Server(config=server_config, cache=Cache())
     IDP.ticket = {}
 
     HOST = CONFIG.HOST
